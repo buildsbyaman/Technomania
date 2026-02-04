@@ -29,6 +29,20 @@ async function validateAnswerWithLLM(question, userAnswer, correctAnswers) {
       return true;
     }
 
+    const normalizedUser = userAnswer.trim().toLowerCase();
+    const hasPlural = correctAnswers.some((ans) => {
+      const normalizedAns = ans.trim().toLowerCase();
+      return (
+        normalizedUser === normalizedAns + "s" ||
+        normalizedUser + "s" === normalizedAns
+      );
+    });
+
+    if (hasPlural) {
+      console.log("Plural/singular variation accepted");
+      return true;
+    }
+
     const correctAnswersList = correctAnswers.join(" OR ");
 
     const prompt = `Task: Compare user's answer with correct answer(s) for a quiz question.
@@ -37,30 +51,36 @@ Question: ${question}
 Correct Answer(s): ${correctAnswersList}
 User Submitted: ${userAnswer}
 
-Rules for marking YES (answer is correct):
-1. The meaning is IDENTICAL to one of the correct answers
-2. Only spelling variations allowed (e.g., "color" vs "colour")
-3. Abbreviations that mean the exact same thing (e.g., "XSS" = "Cross-Site Scripting")
+Mark YES if the user's answer is essentially correct. Allow these variations:
+1. Plural/singular (e.g., "edge" = "edges")
+2. Adding common descriptive words (e.g., "Brute Force" = "brute force attack", "DFS" = "DFS algorithm")
+3. Case differences (e.g., "HTTP" = "http")
+4. Spelling variations (e.g., "color" = "colour")
+5. Abbreviations (e.g., "XSS" = "Cross-Site Scripting")
+6. Articles/determiners (e.g., "the internet" = "internet")
+7. Word order that doesn't change meaning
 
-Rules for marking NO (answer is wrong):
-1. Different concept, even if related
-2. Partially correct but missing key information
-3. Contains correct answer plus wrong information
+Mark NO only if:
+1. Fundamentally different concept (e.g., "Paris" vs "France")
+2. Wrong specific term (e.g., "HTTP" vs "HTTPS")
+3. Random/gibberish text
 4. Opposite meaning
-5. Too vague or generic
-6. Random text, gibberish, or unrelated content
-7. ANY doubt whatsoever
+5. Missing critical part of multi-part answer
+
+Examples that should be YES:
+- Correct: "Brute Force", User: "brute force attack" → YES (adds descriptive word)
+- Correct: "Edge", User: "edges" → YES (plural)
+- Correct: "DFS", User: "Depth First Search" → YES (abbreviation)
+- Correct: "SQL Injection", User: "SQLi" → YES (abbreviation)
+- Correct: "Stack", User: "stack data structure" → YES (adds descriptive words)
 
 Examples that should be NO:
-- Correct: "Paris", User: "France" → NO
-- Correct: "HTTP", User: "HTTPS" → NO  
-- Correct: "2", User: "two" → NO (unless question accepts number words)
-- Correct: "Array", User: "List" → NO
-- Correct: "JavaScript", User: "Java" → NO
-- Correct: "Paris", User: "asdf" → NO
-- Correct: "Paris", User: "city" → NO
+- Correct: "Paris", User: "France" → NO (different concept)
+- Correct: "HTTP", User: "HTTPS" → NO (different protocol)
+- Correct: "JavaScript", User: "Java" → NO (different language)
+- Correct: "Binary Tree", User: "tree" → NO (too vague, missing key part)
 
-Reply ONLY with: YES or NO`;
+Reply ONLY: YES or NO`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -68,7 +88,7 @@ Reply ONLY with: YES or NO`;
         {
           role: "system",
           content:
-            "You are a strict quiz grader. Default to NO unless you are 100% certain the meanings are identical. Random or gibberish text is always NO.",
+            "You are a fair quiz grader. Accept answers that are essentially correct with minor variations or added descriptive words. Only reject truly wrong answers.",
         },
         {
           role: "user",
