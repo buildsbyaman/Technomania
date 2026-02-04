@@ -18,27 +18,49 @@ async function validateAnswerWithLLM(question, userAnswer, correctAnswers) {
       return fallbackValidation(userAnswer, correctAnswers);
     }
 
-    const correctAnswersList = correctAnswers.join(", ");
+    if (!userAnswer || userAnswer.trim().length === 0) {
+      console.log("Empty answer rejected");
+      return false;
+    }
 
-    const prompt = `You are a strict quiz answer validator. Determine if the user's answer is correct.
+    const exactMatch = fallbackValidation(userAnswer, correctAnswers);
+    if (exactMatch) {
+      console.log("Exact match found - accepted without LLM");
+      return true;
+    }
 
-Question: "${question}"
-Correct answers: ${correctAnswersList}
-User's answer: "${userAnswer}"
+    const correctAnswersList = correctAnswers.join(" OR ");
 
-The answer is CORRECT only if:
-- It means EXACTLY the same thing as one of the correct answers
-- Minor spelling variations are acceptable (e.g., "colour" vs "color")
-- Case and formatting differences are acceptable
+    const prompt = `Task: Compare user's answer with correct answer(s) for a quiz question.
 
-The answer is INCORRECT if:
-- It's a different concept, even if related to the topic
-- It's only partially correct
-- It has extra information that changes the meaning
-- It's too vague or generic
-- It's the opposite of the correct answer
+Question: ${question}
+Correct Answer(s): ${correctAnswersList}
+User Submitted: ${userAnswer}
 
-Respond with ONLY one word: CORRECT or INCORRECT`;
+Rules for marking YES (answer is correct):
+1. The meaning is IDENTICAL to one of the correct answers
+2. Only spelling variations allowed (e.g., "color" vs "colour")
+3. Abbreviations that mean the exact same thing (e.g., "XSS" = "Cross-Site Scripting")
+
+Rules for marking NO (answer is wrong):
+1. Different concept, even if related
+2. Partially correct but missing key information
+3. Contains correct answer plus wrong information
+4. Opposite meaning
+5. Too vague or generic
+6. Random text, gibberish, or unrelated content
+7. ANY doubt whatsoever
+
+Examples that should be NO:
+- Correct: "Paris", User: "France" → NO
+- Correct: "HTTP", User: "HTTPS" → NO  
+- Correct: "2", User: "two" → NO (unless question accepts number words)
+- Correct: "Array", User: "List" → NO
+- Correct: "JavaScript", User: "Java" → NO
+- Correct: "Paris", User: "asdf" → NO
+- Correct: "Paris", User: "city" → NO
+
+Reply ONLY with: YES or NO`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -46,7 +68,7 @@ Respond with ONLY one word: CORRECT or INCORRECT`;
         {
           role: "system",
           content:
-            "You are a strict quiz grader. Only mark answers as CORRECT if they match the accepted answers exactly in meaning. Be strict.",
+            "You are a strict quiz grader. Default to NO unless you are 100% certain the meanings are identical. Random or gibberish text is always NO.",
         },
         {
           role: "user",
@@ -54,17 +76,26 @@ Respond with ONLY one word: CORRECT or INCORRECT`;
         },
       ],
       temperature: 0.0,
-      max_tokens: 10,
+      max_tokens: 3,
     });
 
     const result = response.choices[0].message.content.trim().toUpperCase();
+
+    if (result !== "YES" && result !== "NO") {
+      console.error(`Unexpected LLM response: "${result}" - defaulting to NO`);
+      return false;
+    }
+
+    const isCorrect = result === "YES";
+
     console.log(
-      `LLM Validation - Question: "${question}", User: "${userAnswer}", Expected: [${correctAnswersList}], Result: ${result}`,
+      `LLM Validation - Q: "${question}" | User: "${userAnswer}" | Expected: [${correctAnswersList}] | LLM: ${result} | Result: ${isCorrect ? "✓ CORRECT" : "✗ INCORRECT"}`,
     );
 
-    return result === "CORRECT";
+    return isCorrect;
   } catch (error) {
     console.error("Error validating answer with LLM:", error.message);
+    console.log("Falling back to exact match only");
     return fallbackValidation(userAnswer, correctAnswers);
   }
 }
