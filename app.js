@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const path = require("path");
 require("dotenv").config();
 
@@ -20,15 +21,32 @@ mongoose
     process.exit(1);
   });
 
+app.set("trust proxy", 1);
+
+const sessionStore = MongoStore.create({
+  mongoUrl: MONGODB_URI,
+  touchAfter: 24 * 3600,
+  crypto: {
+    secret: SESSION_SECRET,
+  },
+  collectionName: "sessions",
+});
+
+sessionStore.on("error", (error) => {
+  console.error("Session store error:", error);
+});
+
 app.use(
   session({
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    store: sessionStore,
     cookie: {
       secure: process.env.NODE_ENV === "production",
       httpOnly: true,
       maxAge: SESSION_MAX_AGE,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     },
   }),
 );
