@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Locked Out</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .locked-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .locked-card {
+        background: var(--neo-pink);
+        border: 4px solid #000;
+        padding: 60px 40px;
+        max-width: 500px;
+        box-shadow: 12px 12px 0 #000;
+        text-align: center;
+      }
+      .locked-icon {
+        font-size: 5rem;
+        margin-bottom: 20px;
+      }
+      .locked-title {
+        font-size: 2.5rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        color: #000;
+        margin-bottom: 20px;
+      }
+      .locked-text {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #000;
+        line-height: 1.8;
+      }
+      .logout-btn {
+        margin-top: 30px;
+        padding: 15px 30px;
+        background: var(--neo-yellow);
+        color: #000;
+        border: 4px solid #000;
+        font-size: 1.1rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        cursor: pointer;
+        box-shadow: 6px 6px 0 #000;
+        transition: all 0.1s;
+        text-decoration: none;
+        display: inline-block;
+      }
+      .logout-btn:hover {
+        transform: translate(2px, 2px);
+        box-shadow: 4px 4px 0 #000;
+      }
+    </style>
+    <script>
+      history.pushState(null, null, location.href);
+      window.onpopstate = function () {
+        history.go(1);
+      };
+
+      document.addEventListener("keydown", function (e) {
+        if (
+          e.key === "Backspace" &&
+          e.target.tagName !== "INPUT" &&
+          e.target.tagName !== "TEXTAREA"
+        ) {
+          e.preventDefault();
+        }
+        if (
+          (e.altKey && e.key === "ArrowLeft") ||
+          (e.altKey && e.key === "ArrowRight") ||
+          (e.ctrlKey && e.key === "r") ||
+          (e.metaKey && e.key === "r") ||
+          e.key === "F5"
+        ) {
+          e.preventDefault();
+        }
+      });
+
+      
+      sessionStorage.clear();
+    </script>
+  </head>
+  <body>
+    <div class="grid-bg"></div>
+    <div class="locked-container">
+      <div class="locked-card">
+        <div class="locked-icon"></div>
+        <h1 class="locked-title">Sorry!</h1>
+        <p class="locked-text">
+          Wrong Answer.<br />
+          Contact our team if you think it's a mistake. </br>
+          Your team has been locked out.<br /><br />
+          Thank you for participating!
+        </p>
+        <a href="/logout" class="logout-btn">Logout</a>
+      </div>
+    </div>
+  </body>
+</html>

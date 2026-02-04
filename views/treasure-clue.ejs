@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treasure Hunt - <%= team.teamName %></title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .clue-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 600px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .clue-text {
+            font-size: 1.2em;
+            line-height: 1.8;
+            font-style: italic;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .answer-form {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .answer-input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            margin-bottom: 15px;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .submit-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+        .error-msg {
+            background: #f44336;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .round-info {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Treasure Hunt - Round <%= team.currentRound %></h1>
+            <p>Team: <%= team.teamName %> (<%= team.teamId %>)</p>
+        </div>
+
+        <div class="clue-container">
+            <div class="round-info">
+                Round <%= clue.round %>
+            </div>
+            
+            <div class="clue-text">
+                <%= clue.question %>
+            </div>
+
+            <div class="answer-form">
+                <% if (error) { %>
+                    <div class="error-msg"><%= error %></div>
+                <% } %>
+
+                <form method="POST" action="/treasure-hunt/submit-answer" id="answerForm">
+                    <input type="hidden" name="round" value="<%= clue.round %>">
+                    <input 
+                        type="text" 
+                        name="answer" 
+                        class="answer-input" 
+                        placeholder="Enter your answer..."
+                        required
+                        autocomplete="off"
+                    >
+                    <button type="submit" class="submit-btn">Submit Answer</button>
+                </form>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="/dashboard" style="color: #667eea; text-decoration: none;">← Back to Dashboard</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('answerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('.submit-btn');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Checking...';
+
+            try {
+                const response = await fetch('/treasure-hunt/submit-answer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        answer: formData.get('answer'),
+                        round: formData.get('round')
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(data.message);
+                    window.location.href = '/dashboard';
+                } else {
+                    alert(data.message);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Answer';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Answer';
+            }
+        });
+    </script>
+</body>
+</html>

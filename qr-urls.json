@@ -1,0 +1,127 @@
+{
+  "baseUrl": "https://technomania.vercel.app",
+  "generatedAt": "2026-02-04T19:45:37.584Z",
+  "totalLocations": 24,
+  "urls": [
+    {
+      "location": "Gate 4",
+      "url": "https://technomania.vercel.app/location/gate-4",
+      "slug": "gate-4"
+    },
+    {
+      "location": "Water Tank **",
+      "url": "https://technomania.vercel.app/location/water-tank-",
+      "slug": "water-tank-"
+    },
+    {
+      "location": "Water Tank C1",
+      "url": "https://technomania.vercel.app/location/water-tank-c1",
+      "slug": "water-tank-c1"
+    },
+    {
+      "location": "** Back Garden",
+      "url": "https://technomania.vercel.app/location/-back-garden",
+      "slug": "-back-garden"
+    },
+    {
+      "location": "Gate 2",
+      "url": "https://technomania.vercel.app/location/gate-2",
+      "slug": "gate-2"
+    },
+    {
+      "location": "Food Republic",
+      "url": "https://technomania.vercel.app/location/food-republic",
+      "slug": "food-republic"
+    },
+    {
+      "location": "Horse Statue - **",
+      "url": "https://technomania.vercel.app/location/horse-statue-",
+      "slug": "horse-statue-"
+    },
+    {
+      "location": "ABDUL KALAM",
+      "url": "https://technomania.vercel.app/location/abdul-kalam",
+      "slug": "abdul-kalam"
+    },
+    {
+      "location": "Basketball Court 1 Nearest **",
+      "url": "https://technomania.vercel.app/location/basketball-court-1-nearest-",
+      "slug": "basketball-court-1-nearest-"
+    },
+    {
+      "location": "** stairs",
+      "url": "https://technomania.vercel.app/location/-stairs",
+      "slug": "-stairs"
+    },
+    {
+      "location": "Samosa Express",
+      "url": "https://technomania.vercel.app/location/samosa-express",
+      "slug": "samosa-express"
+    },
+    {
+      "location": "Main Stage",
+      "url": "https://technomania.vercel.app/location/main-stage",
+      "slug": "main-stage"
+    },
+    {
+      "location": "SBI ATM",
+      "url": "https://technomania.vercel.app/location/sbi-atm",
+      "slug": "sbi-atm"
+    },
+    {
+      "location": "J AND K ATM",
+      "url": "https://technomania.vercel.app/location/j-and-k-atm",
+      "slug": "j-and-k-atm"
+    },
+    {
+      "location": "I Love Chandigarh University sign",
+      "url": "https://technomania.vercel.app/location/i-love-chandigarh-university-sign",
+      "slug": "i-love-chandigarh-university-sign"
+    },
+    {
+      "location": "Workshop & Canteen Area",
+      "url": "https://technomania.vercel.app/location/workshop-canteen-area",
+      "slug": "workshop-canteen-area"
+    },
+    {
+      "location": "Old Stationery area, ** Building",
+      "url": "https://technomania.vercel.app/location/old-stationery-area-building",
+      "slug": "old-stationery-area-building"
+    },
+    {
+      "location": "Food Republic, ** Block",
+      "url": "https://technomania.vercel.app/location/food-republic-block",
+      "slug": "food-republic-block"
+    },
+    {
+      "location": "Fountain side of ** Block",
+      "url": "https://technomania.vercel.app/location/fountain-side-of-block",
+      "slug": "fountain-side-of-block"
+    },
+    {
+      "location": "Hand Symbol Area near **",
+      "url": "https://technomania.vercel.app/location/hand-symbol-area-near-",
+      "slug": "hand-symbol-area-near-"
+    },
+    {
+      "location": "Main Fountain Area of ** Block",
+      "url": "https://technomania.vercel.app/location/main-fountain-area-of-block",
+      "slug": "main-fountain-area-of-block"
+    },
+    {
+      "location": "Parcel Collection Area",
+      "url": "https://technomania.vercel.app/location/parcel-collection-area",
+      "slug": "parcel-collection-area"
+    },
+    {
+      "location": "Corner Café",
+      "url": "https://technomania.vercel.app/location/corner-caf",
+      "slug": "corner-caf"
+    },
+    {
+      "location": "Admission Block",
+      "url": "https://technomania.vercel.app/location/admission-block",
+      "slug": "admission-block"
+    }
+  ]
+}

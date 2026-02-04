@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .admin-nav {
+            background: #000;
+            padding: 20px;
+            border-bottom: 4px solid var(--neo-yellow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .admin-title {
+            font-size: 2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: var(--neo-yellow);
+        }
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+        .nav-links a {
+            padding: 10px 20px;
+            background: var(--neo-white);
+            color: #000;
+            text-decoration: none;
+            font-weight: 900;
+            border: 3px solid var(--neo-yellow);
+            text-transform: uppercase;
+        }
+        .nav-links a:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 4px 4px 0 var(--neo-yellow);
+            background: var(--neo-yellow);
+        }
+        .logout-btn {
+            background: var(--neo-pink) !important;
+            border-color: var(--neo-pink) !important;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .stat-card {
+            background: var(--neo-yellow);
+            border: 4px solid #000;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 8px 8px 0 #000;
+        }
+        .stat-card:nth-child(2) {
+            background: var(--neo-green);
+        }
+        .stat-card:nth-child(3) {
+            background: #ff9f43;
+        }
+        .stat-card:nth-child(4) {
+            background: var(--neo-pink);
+        }
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #000;
+        }
+        .stat-label {
+            font-size: 1rem;
+            font-weight: 900;
+            color: #000;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+        .data-table {
+            background: var(--neo-white);
+            border: 4px solid #000;
+            padding: 20px;
+            box-shadow: 8px 8px 0 #000;
+            margin: 30px 0;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 2px solid #000;
+            font-weight: bold;
+            color: #000;
+        }
+        th {
+            background: #000;
+            color: var(--neo-yellow);
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+        tr:hover {
+            background: var(--neo-yellow);
+        }
+        .status-completed { 
+            background: var(--neo-green);
+            padding: 5px 10px;
+            border: 2px solid #000;
+            font-weight: 900;
+        }
+        .status-active { 
+            background: var(--neo-cyan);
+            padding: 5px 10px;
+            border: 2px solid #000;
+            font-weight: 900;
+        }
+        .status-locked_out { 
+            background: #ff9f43;
+            padding: 5px 10px;
+            border: 2px solid #000;
+            font-weight: 900;
+        }
+        .status-disqualified { 
+            background: var(--neo-pink);
+            padding: 5px 10px;
+            border: 2px solid #000;
+            font-weight: 900;
+        }
+        .team-link {
+            color: #000;
+            text-decoration: underline;
+            font-weight: 900;
+        }
+        .team-link:hover {
+            color: var(--neo-pink);
+        }
+        .team-id {
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    
+    <nav class="admin-nav">
+        <span class="admin-title">Admin Dashboard</span>
+        <div class="nav-links">
+            <a href="/admin/logout" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number"><%= stats.totalTeams %></div>
+                <div class="stat-label">Total Teams</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><%= stats.completedTeams %></div>
+                <div class="stat-label">Finished</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><%= stats.lockedOutTeams %></div>
+                <div class="stat-label">Locked Out</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><%= stats.disqualifiedTeams %></div>
+                <div class="stat-label">Disqualified</div>
+            </div>
+        </div>
+
+        <h2 style="font-size: 2rem; font-weight: 900; text-transform: uppercase; margin: 30px 0 20px 0;">Live Leaderboard</h2>
+        <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Team Name</th>
+                            <th>Passcode</th>
+                            <th>Current Round</th>
+                            <th>Status</th>
+                            <th>Last Active / Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% leaderboard.forEach((team, index) => { %>
+                            <tr>
+                                <td><%= index + 1 %></td>
+                                <td>
+                                    <a href="/admin/teams/<%= team._id %>" class="team-link"><%= team.teamName %></a>
+                                    <span class="team-id">(<%= team.teamId %>)</span>
+                                </td>
+                                <td><strong><%= team.passcode %></strong></td>
+                                <td>
+                                    <% if (team.status === 'completed') { %>
+                                        Finished
+                                    <% } else { %>
+                                        Round <%= team.currentRound %>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <span class="status-<%= team.status %>"><%= team.status.toUpperCase() %></span>
+                                </td>
+                                <td>
+                                    <% if (team.status === 'completed') { %>
+                                        <%= formatDate(team.completedAt) %>
+                                    <% } else { %>
+                                        <%= formatDate(team.updatedAt) %>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+        </div>
+    </div>
+</body>
+</html>
