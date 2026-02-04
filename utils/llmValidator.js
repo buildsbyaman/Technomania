@@ -20,35 +20,49 @@ async function validateAnswerWithLLM(question, userAnswer, correctAnswers) {
 
     const correctAnswersList = correctAnswers.join(", ");
 
-    const prompt = `You are validating quiz answers. Determine if the user's answer is semantically correct.
+    const prompt = `You are a strict quiz answer validator. Determine if the user's answer is correct.
 
 Question: "${question}"
-Accepted answers: ${correctAnswersList}
+Correct answers: ${correctAnswersList}
 User's answer: "${userAnswer}"
 
-The user's answer is CORRECT if it means the same thing as any accepted answer, even with:
-- Different formatting (hyphens, spaces, capitalization)
-- Abbreviations (XSS = Cross-Site Scripting)
-- Minor spelling differences
-- Extra descriptive words that don't change the core meaning
+The answer is CORRECT only if:
+- It means EXACTLY the same thing as one of the correct answers
+- Minor spelling variations are acceptable (e.g., "colour" vs "color")
+- Case and formatting differences are acceptable
 
-Reply with exactly one word: CORRECT or INCORRECT`;
+The answer is INCORRECT if:
+- It's a different concept, even if related to the topic
+- It's only partially correct
+- It has extra information that changes the meaning
+- It's too vague or generic
+- It's the opposite of the correct answer
+
+Respond with ONLY one word: CORRECT or INCORRECT`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
         {
+          role: "system",
+          content:
+            "You are a strict quiz grader. Only mark answers as CORRECT if they match the accepted answers exactly in meaning. Be strict.",
+        },
+        {
           role: "user",
           content: prompt,
         },
       ],
-      temperature: 0.1,
-      max_tokens: 50,
+      temperature: 0.0,
+      max_tokens: 10,
     });
 
     const result = response.choices[0].message.content.trim().toUpperCase();
+    console.log(
+      `LLM Validation - Question: "${question}", User: "${userAnswer}", Expected: [${correctAnswersList}], Result: ${result}`,
+    );
 
-    return result === "CORRECT" || result.includes("CORRECT");
+    return result === "CORRECT";
   } catch (error) {
     console.error("Error validating answer with LLM:", error.message);
     return fallbackValidation(userAnswer, correctAnswers);
