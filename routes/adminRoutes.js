@@ -32,16 +32,29 @@ router.post(
 
     try {
       const { username, password } = req.body;
+      console.log("Login attempt:", { username, password: "***" });
+
       const admin = await Admin.findOne({ username });
+      console.log("Admin found:", admin ? "Yes" : "No");
 
       if (!admin || admin.password !== password) {
+        console.log("Login failed: Invalid credentials");
         return res.render("admin/login", {
           error: "Invalid username or password",
         });
       }
 
       req.session.adminId = admin._id;
-      res.redirect("/admin/dashboard");
+      console.log("Session set:", req.session.adminId);
+
+      req.session.save((err) => {
+        if (err) {
+          console.error("Session save error:", err);
+          return res.render("admin/login", { error: "Session error" });
+        }
+        console.log("Session saved, redirecting...");
+        res.redirect("/admin/dashboard");
+      });
     } catch (error) {
       console.error("Login error:", error);
       res.render("admin/login", { error: "Server error" });
@@ -131,7 +144,6 @@ router.post("/teams/:id/approve-answer", requireAuth, async (req, res) => {
       return res.status(404).send("Team not found");
     }
 
-    
     const question = team.assignedQuestions.find(
       (q) => q.round === parseInt(round),
     );
