@@ -3,36 +3,82 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Submission Complete</title>
+    <title>Final Clue</title>
     <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .clue-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        padding: 30px;
+        margin: 20px auto;
+        max-width: 600px;
+        color: white;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+      .clue-text {
+        font-size: 1.2em;
+        line-height: 1.8;
+        font-style: italic;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+      .round-info {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 1.5em;
+        font-weight: bold;
+      }
+      .final-message {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        font-size: 1.1em;
+        margin-top: 20px;
+      }
+      .logout-btn {
+        width: 100%;
+        padding: 12px;
+        background: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.1em;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: block;
+        margin-top: 20px;
+      }
+      .logout-btn:hover {
+        background: #45a049;
+        transform: translateY(-2px);
+      }
+    </style>
   </head>
   <body>
     <div class="grid-bg"></div>
 
     <div class="container">
-      <div class="quiz-card">
-        <div class="result-emoji"></div>
+      <div class="header">
+        <h1>Treasure Hunt Complete</h1>
+      </div>
 
-        <h1
-          class="result-title"
-          style="font-size: clamp(2rem, 8vw, 4rem); color: #000"
-        >
-          THANK YOU!
-        </h1>
+      <div class="clue-container">
+        <div class="round-info">Final Clue</div>
 
-        <div class="result-info">
-          <p class="result-text">You have completed all 3 rounds.</p>
-          <p class="result-text" style="font-size: 1.3rem; margin-top: 30px">
-            Our team will contact you shortly for the results.
-          </p>
+        <div class="clue-text">
+          End is the new beginning…the end is calling ✨
         </div>
 
-        <div class="result-actions" style="margin-top: 50px">
-          <a href="/logout" class="action-btn secondary"> LOGOUT </a>
+        <div class="final-message">
+          <p>You have completed all 3 rounds.</p>
+          <p style="margin-top: 15px">
+            Our team will contact you shortly for the results.
+          </p>
+          <a href="/logout" class="logout-btn">LOGOUT</a>
         </div>
       </div>
     </div>
-
-    <script></script>
   </body>
 </html>
